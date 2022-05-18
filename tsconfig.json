@@ -1,5 +1,17 @@
 {
     "compilerOptions": {
-        "noImplicitAny": false
+        "noImplicitAny": false,
+        "outDir": "dist",
+        "typeRoots": ["./node_modules/@types"],
+        "removeComments": true,
+        "esModuleInterop": true,
+        "noEmitOnError": true
     },
+    "exclude": [
+        "node_modules/**/*.ts",
+        "node_modules/@graphql-tools/"
+    ],
+    "include": [
+        "./src/*.ts"
+    ]
 }
