@@ -1,0 +1,24 @@
+{
+  "name": "graphql-tools-learning",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "nodemon ./index.ts"
+  },
+  "dependencies": {
+    "@graphql-tools/mock": "^8.6.9",
+    "@graphql-tools/schema": "^8.3.11",
+    "@graphql-tools/stitch": "^8.6.10",
+    "@graphql-tools/utils": "^8.6.10",
+    "@graphql-tools/wrap": "^8.4.17",
+    "apollo-server": "^3.7.0",
+    "axios": "^0.27.2",
+    "graphql": "^16.5.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.16",
+    "ts-node": "^10.7.0",
+    "typescript": "^4.6.4"
+  }
+}
