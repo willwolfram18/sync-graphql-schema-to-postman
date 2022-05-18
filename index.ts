@@ -1,15 +1,14 @@
-import { makeExecutableSchema } from '@graphql-tools/schema';
-import { addMocksToSchema } from '@graphql-tools/mock';
-import { stitchSchemas } from '@graphql-tools/stitch';
-import { ApolloServer, gql } from 'apollo-server';
 import { print } from 'graphql';
 import { printSchemaWithDirectives, AsyncExecutor } from '@graphql-tools/utils';
 import { introspectSchema } from '@graphql-tools/wrap';
 import axios from 'axios';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 const schemaFetcher: AsyncExecutor = async ({ document, variables }) => {
     const introspectionQuery = print(document);
-    const introspectionResponse = await axios.post('http://localhost:5117/graphql/', {
+    const introspectionResponse = await axios.post(process.env.GRAPHQL_API, {
         query: introspectionQuery,
         variables
     }, {
@@ -23,9 +22,38 @@ const schemaFetcher: AsyncExecutor = async ({ document, variables }) => {
     return introspectionResponse.data;
 };
 
-introspectSchema(schemaFetcher).then(schema => {
-    console.log(printSchemaWithDirectives(schema));
-});
+async function main() {
+    const schema = await introspectSchema(schemaFetcher);
+    const schemaText = printSchemaWithDirectives(schema);
+
+    console.log('Retrieved the following schema: ', schemaText);
+
+    await updatePostmanApiSchema(schemaText);
+}
+
+async function updatePostmanApiSchema(schema: string) {
+    const postmanAddress = `https://api.postman.com/apis/${process.env.POSTMAN_API_ID}/versions/${process.env.POSTMAN_API_VERSION_ID}/schemas/${process.env.POSTMAN_API_SCHEMA_ID}`;
+    const response = await axios.put(postmanAddress, {
+        schema: {
+            language: 'graphql',
+            schema,
+            type: 'graphql'
+        }
+    }, {
+        headers: {
+            'X-API-KEY': process.env.POSTMAN_API_KEY,
+            'content-type': 'application/json'
+        }
+    });
+
+    if (response.status >= 200 && response.status < 300) {
+        console.log("Successfully updated schema!");
+    } else {
+        console.error("Failed to update schema: ", response.status, response.data);
+    }
+}
+
+main().then(() => console.log("*** Done! ***"))
 
 // const users = [
 //     {

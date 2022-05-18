@@ -8,4 +8,7 @@ public class Person
     public string FirstName { get; set; }
 
     public string LastName { get; set; }
+
+    [GraphQLName("devices")]
+    public IEnumerable<Device> GetDevices() => throw new NotImplementedException();
 }
